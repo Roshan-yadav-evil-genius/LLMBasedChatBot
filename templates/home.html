@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='home.css') }}"
+    />
+    <link rel="stylesheet" href="../static/home.css" />
+    <title>BridgeSkillz</title>
+  </head>
+  <body>
+    <section class="sidebar">
+      {% for user in users %}
+      <a href="/userid/{{ user.id }}"> {{ user.name }} 1 </a>
+      {% endfor %}
+    </section>
+    <section class="msger">
+      <header class="msger-header">
+        <div class="msger-header-title">
+          <i class="fas fa-comment-alt"></i> {{user['name']}}
+        </div>
+        <div class="msger-header-options">
+          <span><i class="fas fa-cog"></i></span>
+        </div>
+      </header>
+
+      <main class="msger-chat">
+      {% for response in chat %}
+      {% if response['role'] == 'user' %}
+        <div class="msg right-msg">
+          <div
+            class="msg-img"
+            style="
+              background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg);
+            "
+          ></div>
+
+          <div class="msg-bubble">
+            <div class="msg-info">
+              <div class="msg-info-name">{{user['name']}}</div>
+              <div class="msg-info-time">{{response['createdon']}}</div>
+            </div>
+
+            <div class="msg-text">{{response['content']}}</div>
+          </div>
+        </div>
+      
+      {% else %}
+        <div class="msg left-msg">
+          <div
+            class="msg-img"
+            style="
+              background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg);
+            "
+          ></div>
+
+          <div class="msg-bubble">
+            <div class="msg-info">
+              <div class="msg-info-name">BOT</div>
+              <div class="msg-info-time">{{response['createdon']}}</div>
+            </div>
+
+            <div class="msg-text">{{response['content']}}</div>
+          </div>
+        </div>
+      
+      {% endif %}
+      {% endfor %}
+
+
+      </main>
+
+      <form class="msger-inputarea" id="messageForm">
+      <input name='id' value={{user['id']}} hidden/>
+        <input
+        name='msg'
+          type="text"
+          class="msger-input"
+          placeholder="Enter your message..."
+        />
+        <button type="submit" class="msger-send-btn">Send</button>
+      </form>
+    </section>
+
+
+<script>
+    // Function to handle form submission
+    function sendMessage(event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
+        // Get the values from the form
+        const id = document.querySelector('input[name="id"]').value;
+        const message = document.querySelector('input[name="msg"]').value;
+
+        // Log the values to the console
+        console.log('ID:', id);
+        console.log('Message:', message);
+
+        const payload = { id: id, msg: message };
+
+        // Make a POST request to the server
+        fetch('/receive_message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        })
+        .then(response => response.text())
+        .then(data => console.log('Server Response:', data))
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Attach the function to the form's submit event
+    const messageForm = document.getElementById('messageForm');
+    messageForm.addEventListener('submit', sendMessage);
+</script>
+  </body>
+</html>
