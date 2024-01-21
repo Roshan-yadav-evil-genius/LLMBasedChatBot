@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional
 from typing import Dict
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 import json
 import yaml
 
@@ -29,11 +29,11 @@ class TimePeriod:
 
 @dataclass
 class FollowUp:
-    Minute: TimePeriod = TimePeriod()
-    Hour: TimePeriod = TimePeriod()
-    Day: TimePeriod = TimePeriod()
-    Month: TimePeriod = TimePeriod()
-    Year: TimePeriod = TimePeriod()
+    Minute: TimePeriod = field(default_factory=TimePeriod)
+    Hour: TimePeriod = field(default_factory=TimePeriod)
+    Day: TimePeriod = field(default_factory=TimePeriod)
+    Month: TimePeriod = field(default_factory=TimePeriod)
+    Year: TimePeriod = field(default_factory=TimePeriod)
 
     @property
     def to_dict(self) -> Dict[str, Optional[Dict[str, Any]]]:
